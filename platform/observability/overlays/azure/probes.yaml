@@ -12,7 +12,7 @@ spec:
     staticConfig:
       labels: { probe_type: peer }
       static:
-        - http://onprem.DOMAIN/healthz
+        - http://onprem.kacperhylinski.pl/healthz
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: Probe
@@ -28,4 +28,4 @@ spec:
     staticConfig:
       labels: { probe_type: global }
       static:
-        - http://app.DOMAIN/healthz
+        - http://app.kacperhylinski.pl/healthz

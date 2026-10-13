@@ -20,8 +20,8 @@ labels:
 # oba klastry dostają ten sam, niezmienny tag (SHA commita).
 images:
   - name: hybrid-api
-    newName: ghcr.io/GITHUB_USER/hybrid-api
+    newName: ghcr.io/kacperhy/hybrid-api
     newTag: latest
   - name: hybrid-frontend
-    newName: ghcr.io/GITHUB_USER/hybrid-frontend
+    newName: ghcr.io/kacperhy/hybrid-frontend
     newTag: latest

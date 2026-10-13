@@ -6,8 +6,8 @@ ingressClass:
 service:
   type: LoadBalancer
   annotations:
-    # publiczna nazwa: AKS_DNS_LABEL.<region>.cloudapp.azure.com -> endpoint "azure" w Traffic Managerze
-    service.beta.kubernetes.io/azure-dns-label-name: AKS_DNS_LABEL
+    # publiczna nazwa: hybryda-kacper.<region>.cloudapp.azure.com -> endpoint "azure" w Traffic Managerze
+    service.beta.kubernetes.io/azure-dns-label-name: hybryda-kacper
     # sonda Azure Load Balancera na port Traefika (TCP), żeby nie zależała od reguł Ingress
     service.beta.kubernetes.io/port_80_health-probe_protocol: Tcp
     service.beta.kubernetes.io/port_443_health-probe_protocol: Tcp

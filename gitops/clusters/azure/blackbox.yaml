@@ -15,7 +15,7 @@ spec:
         releaseName: blackbox
         valueFiles:
           - $values/platform/monitoring/blackbox-values.yaml
-    - repoURL: GIT_REPO_URL
+    - repoURL: https://github.com/kacperhy/hybrid-k8s.git
       targetRevision: main
       ref: values
   destination:

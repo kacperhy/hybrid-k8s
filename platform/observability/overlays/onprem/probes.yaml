@@ -12,7 +12,7 @@ spec:
     staticConfig:
       labels: { probe_type: peer }
       static:
-        - http://AKS_INGRESS_FQDN/healthz
+        - http://hybryda-kacper.polandcentral.cloudapp.azure.com/healthz
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: Probe
@@ -28,4 +28,4 @@ spec:
     staticConfig:
       labels: { probe_type: global }
       static:
-        - http://app.DOMAIN/healthz
+        - http://app.kacperhylinski.pl/healthz

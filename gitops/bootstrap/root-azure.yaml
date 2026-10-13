@@ -9,7 +9,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: GIT_REPO_URL
+    repoURL: https://github.com/kacperhy/hybrid-k8s.git
     targetRevision: main
     path: gitops/clusters/azure
   destination:
