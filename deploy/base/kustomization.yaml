@@ -3,25 +3,25 @@ kind: Kustomization
 namespace: hybrid-app
 
 resources:
-  - namespace.yaml
-  - cluster-info.yaml
-  - redis.yaml
-  - api.yaml
-  - frontend.yaml
-  - ingress.yaml
-  - pdb.yaml
-  - servicemonitor.yaml
+- namespace.yaml
+- cluster-info.yaml
+- redis.yaml
+- api.yaml
+- frontend.yaml
+- ingress.yaml
+- pdb.yaml
+- servicemonitor.yaml
 
 labels:
-  - pairs:
-      app.kubernetes.io/part-of: hybrid-demo
+- pairs:
+    app.kubernetes.io/part-of: hybrid-demo
 
 # Tagi obrazów aktualizuje pipeline CI (kustomize edit set image) –
 # oba klastry dostają ten sam, niezmienny tag (SHA commita).
 images:
-  - name: hybrid-api
-    newName: ghcr.io/kacperhy/hybrid-api
-    newTag: latest
-  - name: hybrid-frontend
-    newName: ghcr.io/kacperhy/hybrid-frontend
-    newTag: latest
+- name: hybrid-api
+  newName: ghcr.io/kacperhy/hybrid-api
+  newTag: 1538463fc83f7cb085db9c7d3ad973a63e7c5ea5
+- name: hybrid-frontend
+  newName: ghcr.io/kacperhy/hybrid-frontend
+  newTag: 1538463fc83f7cb085db9c7d3ad973a63e7c5ea5
