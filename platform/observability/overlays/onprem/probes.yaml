@@ -1,0 +1,31 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: peer-cluster
+spec:
+  jobName: peer-cluster
+  interval: 15s
+  module: http_2xx
+  prober:
+    url: blackbox-prometheus-blackbox-exporter.monitoring.svc:9115
+  targets:
+    staticConfig:
+      labels: { probe_type: peer }
+      static:
+        - http://AKS_INGRESS_FQDN/healthz
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: global-endpoint
+spec:
+  jobName: global-endpoint
+  interval: 15s
+  module: http_2xx
+  prober:
+    url: blackbox-prometheus-blackbox-exporter.monitoring.svc:9115
+  targets:
+    staticConfig:
+      labels: { probe_type: global }
+      static:
+        - http://app.DOMAIN/healthz

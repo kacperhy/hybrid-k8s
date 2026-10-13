@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+
+patches:
+  - target:
+      kind: ConfigMap
+      name: cluster-info
+    patch: |-
+      - op: replace
+        path: /data
+        value:
+          CLUSTER_NAME: "onprem"
+          CLUSTER_REGION: "Rzeszów (k3s)"
+          CLUSTER_COLOR: "#2e9e5b"

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hybrid K8s demo</title>
+  <style>
+    :root { --c: #888; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #111; color: #eee;
+           display: grid; place-items: center; min-height: 100vh; }
+    .card { border: 4px solid var(--c); border-radius: 16px; padding: 32px 48px; text-align: center;
+            min-width: 320px; transition: border-color .3s; }
+    h1 { margin: 0 0 8px; font-size: 2.4rem; color: var(--c); }
+    dl { display: grid; grid-template-columns: auto auto; gap: 6px 16px; text-align: left; margin: 24px 0 0; }
+    dt { color: #999; } dd { margin: 0; font-family: ui-monospace, monospace; }
+    .err { color: #f66; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div>Obsłużone przez klaster</div>
+    <h1 id="cluster">…</h1>
+    <dl>
+      <dt>Region</dt><dd id="region">-</dd>
+      <dt>Pod</dt><dd id="pod">-</dd>
+      <dt>Licznik odwiedzin</dt><dd id="visits">-</dd>
+      <dt>Ostatnie odświeżenie</dt><dd id="ts">-</dd>
+    </dl>
+    <p id="error" class="err"></p>
+  </div>
+  <script>
+    async function refresh() {
+      try {
+        const res = await fetch('/api/info', { cache: 'no-store' });
+        const d = await res.json();
+        document.documentElement.style.setProperty('--c', d.color);
+        for (const k of ['cluster', 'region', 'pod', 'visits']) {
+          document.getElementById(k).textContent = d[k] ?? 'brak (redis?)';
+        }
+        document.getElementById('error').textContent = '';
+      } catch (e) {
+        document.getElementById('error').textContent = 'Brak odpowiedzi: ' + e.message;
+      }
+      document.getElementById('ts').textContent = new Date().toLocaleTimeString('pl-PL');
+    }
+    refresh();
+    setInterval(refresh, 2000);
+  </script>
+</body>
+</html>

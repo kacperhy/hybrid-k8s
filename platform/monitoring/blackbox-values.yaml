@@ -1,0 +1,12 @@
+# prometheus-blackbox-exporter – sondy HTTP do drugiego klastra i do
+# globalnego adresu aplikacji (wyniki: metryka probe_success).
+config:
+  modules:
+    http_2xx:
+      prober: http
+      timeout: 5s
+      http:
+        preferred_ip_protocol: ip4
+        valid_status_codes: []   # domyślnie 2xx
+resources:
+  requests: { cpu: 10m, memory: 16Mi }

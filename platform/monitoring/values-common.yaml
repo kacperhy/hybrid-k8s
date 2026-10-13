@@ -1,0 +1,61 @@
+# kube-prometheus-stack – ustawienia wspólne dla obu klastrów.
+# Odchudzone, żeby zmieścić się na jednym węźle B2ms w AKS.
+crds:
+  enabled: true
+
+# k3s (wbudowane etcd/scheduler) i AKS (zarządzany control plane) nie
+# wystawiają tych komponentów – wyłączamy, żeby nie generować fałszywych alertów.
+kubeEtcd: { enabled: false }
+kubeControllerManager: { enabled: false }
+kubeScheduler: { enabled: false }
+kubeProxy: { enabled: false }
+
+alertmanager:
+  alertmanagerSpec:
+    resources:
+      requests: { cpu: 10m, memory: 32Mi }
+
+grafana:
+  admin:
+    existingSecret: grafana-admin   # tworzony przez scripts/30-bootstrap-cluster.sh
+    userKey: admin-user
+    passwordKey: admin-password
+  sidecar:
+    dashboards:
+      enabled: true
+      searchNamespace: ALL
+  resources:
+    requests: { cpu: 25m, memory: 128Mi }
+
+prometheus:
+  prometheusSpec:
+    retention: 3d
+    # zbieraj ServiceMonitor/Probe/PrometheusRule z każdego namespace, bez wymogu etykiety release
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    resources:
+      requests: { cpu: 100m, memory: 400Mi }
+      limits: { memory: 1Gi }
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 5Gi
+    # --- OPCJA "globalny widok": wysyłka wybranych metryk z obu klastrów
+    # do Grafana Cloud (darmowy plan). Grafana Cloud stoi poza oboma
+    # klastrami, więc pokazuje awarię każdego z nich. Odkomentuj i utwórz
+    # sekret: kubectl -n monitoring create secret generic grafana-cloud \
+    #   --from-literal=username=<ID> --from-literal=password=<TOKEN>
+    # remoteWrite:
+    #   - url: https://prometheus-prod-XX.grafana.net/api/prom/push
+    #     basicAuth:
+    #       username: { name: grafana-cloud, key: username }
+    #       password: { name: grafana-cloud, key: password }
+    #     writeRelabelConfigs:
+    #       - sourceLabels: [__name__]
+    #         regex: "up|probe_success|probe_duration_seconds|app_requests_total|kube_deployment_status_replicas_available|kube_node_status_condition"
+    #         action: keep

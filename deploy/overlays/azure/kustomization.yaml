@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+
+patches:
+  - target:
+      kind: ConfigMap
+      name: cluster-info
+    patch: |-
+      - op: replace
+        path: /data
+        value:
+          CLUSTER_NAME: "azure"
+          CLUSTER_REGION: "Azure (AKS)"
+          CLUSTER_COLOR: "#2f7fe0"
+  # W chmurze płacimy za węzeł – jedna replika frontendu wystarcza.
+  - target:
+      kind: Deployment
+      name: frontend
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1

@@ -1,0 +1,28 @@
+# Velero + plugin Azure. Brak snapshotów dysków (k3s local-path ich nie ma) –
+# dane wolumenów kopiowane na poziomie plików przez node-agent (kopia).
+initContainers:
+  - name: velero-plugin-for-microsoft-azure
+    # wersja pluginu musi pasować do wersji Velero z chartu – sprawdź tabelę kompatybilności
+    image: velero/velero-plugin-for-microsoft-azure:v1.12.0
+    volumeMounts:
+      - mountPath: /target
+        name: plugins
+
+deployNodeAgent: true
+snapshotsEnabled: false
+
+credentials:
+  useSecret: true
+  # secretContents.cloud podawane przez scripts/40-install-velero.sh
+
+configuration:
+  defaultVolumesToFsBackup: true
+  backupStorageLocation:
+    - name: default
+      provider: azure
+      bucket: velero
+      default: true
+      config:
+        storageAccountKeyEnvVar: AZURE_STORAGE_ACCOUNT_ACCESS_KEY
+        # resourceGroup / storageAccount / subscriptionId – ze skryptu
+  volumeSnapshotLocation: []

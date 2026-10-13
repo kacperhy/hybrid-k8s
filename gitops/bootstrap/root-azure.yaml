@@ -1,0 +1,19 @@
+# App-of-apps: jedyny obiekt aplikowany ręcznie (scripts/30-bootstrap-cluster.sh).
+# Każdy klaster ma WŁASNE Argo CD, które ciągnie swoją konfigurację z Gita
+# (model pull) – awaria jednego klastra nie blokuje wdrożeń na drugim.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: GIT_REPO_URL
+    targetRevision: main
+    path: gitops/clusters/azure
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated: { prune: true, selfHeal: true }

@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: hybrid-alerts
+spec:
+  groups:
+    - name: hybrid.rules
+      rules:
+        - alert: PeerClusterDown
+          expr: probe_success{probe_type="peer"} == 0
+          for: 1m
+          labels: { severity: critical }
+          annotations:
+            summary: "Drugi klaster ({{ $labels.instance }}) nie odpowiada na /healthz"
+            description: "Ruch powinien zostać przełączony przez Traffic Manager na ten klaster."
+        - alert: GlobalEndpointDown
+          expr: probe_success{probe_type="global"} == 0
+          for: 1m
+          labels: { severity: critical }
+          annotations:
+            summary: "Globalny adres aplikacji nie odpowiada – oba klastry lub DNS niedostępne"
+        - alert: ApiRedisErrors
+          expr: sum(rate(app_requests_total{status=~"redis_error|fail"}[5m])) > 0
+          for: 2m
+          labels: { severity: warning }
+          annotations:
+            summary: "API zgłasza błędy połączenia z Redisem"

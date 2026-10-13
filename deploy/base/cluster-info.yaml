@@ -1,0 +1,9 @@
+# Wartości nadpisywane w overlayach (onprem / azure).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-info
+data:
+  CLUSTER_NAME: "unknown"
+  CLUSTER_REGION: "unknown"
+  CLUSTER_COLOR: "#888888"

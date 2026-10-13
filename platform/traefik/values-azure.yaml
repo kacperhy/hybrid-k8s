@@ -1,0 +1,24 @@
+# Traefik w AKS (w k3s Traefik jest wbudowany).
+ingressClass:
+  enabled: true
+  isDefaultClass: true
+  name: traefik
+service:
+  type: LoadBalancer
+  annotations:
+    # publiczna nazwa: AKS_DNS_LABEL.<region>.cloudapp.azure.com -> endpoint "azure" w Traffic Managerze
+    service.beta.kubernetes.io/azure-dns-label-name: AKS_DNS_LABEL
+    # sonda Azure Load Balancera na port Traefika (TCP), żeby nie zależała od reguł Ingress
+    service.beta.kubernetes.io/port_80_health-probe_protocol: Tcp
+    service.beta.kubernetes.io/port_443_health-probe_protocol: Tcp
+  spec:
+    externalTrafficPolicy: Cluster
+ports:
+  web:
+    port: 8000
+    exposedPort: 80
+  websecure:
+    port: 8443
+    exposedPort: 443
+resources:
+  requests: { cpu: 50m, memory: 64Mi }

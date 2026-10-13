@@ -1,0 +1,7 @@
+subscription_id      = "00000000-0000-0000-0000-000000000000"
+location             = "polandcentral" # sprawdź: Azure Policy -> Allowed resource deployment regions
+prefix               = "hybryda"
+node_vm_size         = "Standard_B2ms"
+onprem_fqdn          = "onprem.serwerfrajerow.top"
+aks_dns_label        = "hybryda-kacper"
+storage_account_name = "hybrydavelero123"

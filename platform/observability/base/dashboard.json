@@ -1,0 +1,32 @@
+{
+  "title": "Hybrid K8s – przegląd",
+  "uid": "hybrid-overview",
+  "schemaVersion": 39,
+  "refresh": "10s",
+  "time": { "from": "now-30m", "to": "now" },
+  "panels": [
+    {
+      "type": "stat", "title": "Dostępność endpointów (probe_success)",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 5 },
+      "targets": [ { "expr": "probe_success", "legendFormat": "{{probe_type}} {{instance}}" } ],
+      "fieldConfig": { "defaults": { "mappings": [
+        { "type": "value", "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" } } }
+      ] } }
+    },
+    {
+      "type": "timeseries", "title": "Żądania API / s",
+      "gridPos": { "x": 0, "y": 5, "w": 12, "h": 8 },
+      "targets": [ { "expr": "sum by (cluster, status) (rate(app_requests_total{endpoint=\"info\"}[1m]))", "legendFormat": "{{cluster}} {{status}}" } ]
+    },
+    {
+      "type": "timeseries", "title": "Czas odpowiedzi sondy (s)",
+      "gridPos": { "x": 12, "y": 5, "w": 12, "h": 8 },
+      "targets": [ { "expr": "probe_duration_seconds", "legendFormat": "{{probe_type}} {{instance}}" } ]
+    },
+    {
+      "type": "timeseries", "title": "Dostępne repliki w hybrid-app",
+      "gridPos": { "x": 0, "y": 13, "w": 24, "h": 8 },
+      "targets": [ { "expr": "kube_deployment_status_replicas_available{namespace=\"hybrid-app\"}", "legendFormat": "{{deployment}}" } ]
+    }
+  ]
+}

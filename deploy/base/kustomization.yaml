@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: hybrid-app
+
+resources:
+  - namespace.yaml
+  - cluster-info.yaml
+  - redis.yaml
+  - api.yaml
+  - frontend.yaml
+  - ingress.yaml
+  - pdb.yaml
+  - servicemonitor.yaml
+
+labels:
+  - pairs:
+      app.kubernetes.io/part-of: hybrid-demo
+
+# Tagi obrazów aktualizuje pipeline CI (kustomize edit set image) –
+# oba klastry dostają ten sam, niezmienny tag (SHA commita).
+images:
+  - name: hybrid-api
+    newName: ghcr.io/GITHUB_USER/hybrid-api
+    newTag: latest
+  - name: hybrid-frontend
+    newName: ghcr.io/GITHUB_USER/hybrid-frontend
+    newTag: latest

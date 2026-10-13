@@ -1,0 +1,8 @@
+config.env
+infra/azure/terraform.tfvars
+infra/azure/.terraform/
+infra/azure/*.tfstate*
+infra/azure/.terraform.lock.hcl
+demo/logs/
+__pycache__/
+.pytest_cache/
