@@ -23,6 +23,9 @@ spec:
     metadata:
       labels: { app: api }
     spec:
+      # Bez tego K8s wstrzykuje zmienne usług, m.in. REDIS_PORT=tcp://10.43.x.x:6379,
+      # które nadpisują naszą konfigurację i psują int(REDIS_PORT) w aplikacji.
+      enableServiceLinks: false
       containers:
         - name: api
           image: hybrid-api
@@ -34,6 +37,8 @@ spec:
           env:
             - name: REDIS_HOST
               value: redis
+            - name: REDIS_PORT
+              value: "6379"
           readinessProbe:
             httpGet: { path: /healthz, port: http }
             periodSeconds: 5
