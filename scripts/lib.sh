@@ -9,5 +9,8 @@ load_config() {
   [[ -f "$ROOT/config.env" ]] || die "Brak config.env – skopiuj config.env.example"
   # shellcheck disable=SC1091
   source "$ROOT/config.env"
-  AKS_INGRESS_FQDN="${AKS_DNS_LABEL}.${LOCATION}.cloudapp.azure.com"
+  # adresy w sieci VPN (wartości domyślne, jeśli config.env ich nie ma)
+  APP_URL="${APP_URL:-http://10.10.20.1}"            # HAProxy na Raspberry Pi
+  ONPREM_INGRESS_IP="${ONPREM_INGRESS_IP:-10.10.20.6}"
+  AZURE_INGRESS_IP="${AZURE_INGRESS_IP:-10.50.1.250}"
 }

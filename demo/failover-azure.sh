@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Scenariusz 2: awaria klastra w chmurze (gdy to on obsługuje ruch, np. przy wyłączonym onprem,
-# albo po zamianie priorytetów w Traffic Managerze).
+# albo po zamianie ról backendów w HAProxy na Pi).
 #   ./demo/failover-azure.sh quick-down | quick-up   – wyłączenie Ingressu (sekundy)
 #   ./demo/failover-azure.sh full-down  | full-up    – az aks stop/start (kilka minut, prawdziwe wyłączenie)
 source "$(dirname "$0")/../scripts/lib.sh"

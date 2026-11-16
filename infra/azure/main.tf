@@ -1,3 +1,9 @@
+# Wariant "tylko przez VPN":
+#  - AKS nie ma publicznego Ingressu; Traefik dostaje WEWNĘTRZNY load balancer w VNet,
+#  - do VNet wchodzimy tunelem WireGuard: Raspberry Pi <-> mała VM-bramka (gateway.tf),
+#  - API AKS (kubectl) jest publiczne, ale tylko dla adresów z api_allowed_cidrs,
+#  - przełączanie ruchu między klastrami robi HAProxy na Pi (vpn/pi/), nie Azure.
+
 resource "azurerm_resource_group" "rg" {
   name     = "rg-${var.prefix}"
   location = var.location
@@ -19,6 +25,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     vm_size                     = var.node_vm_size
     node_count                  = var.node_count
     os_disk_size_gb             = 64
+    vnet_subnet_id              = azurerm_subnet.aks.id
     temporary_name_for_rotation = "tmprot"
   }
 
@@ -30,56 +37,27 @@ resource "azurerm_kubernetes_cluster" "aks" {
     network_plugin      = "azure"
     network_plugin_mode = "overlay"
     load_balancer_sku   = "standard"
+    pod_cidr            = "10.244.0.0/16"
+    service_cidr        = "10.0.0.0/16"
+    dns_service_ip      = "10.0.0.10"
+  }
+
+  # kubectl tylko z naszych publicznych adresów (IP wychodzące klastra AKS dodaje sam)
+  api_server_access_profile {
+    authorized_ip_ranges = var.api_allowed_cidrs
   }
 
   tags = azurerm_resource_group.rg.tags
+
+  # route table musi być przypięta do podsieci, zanim AKS utworzy węzły
+  depends_on = [azurerm_subnet_route_table_association.aks]
 }
 
-# ------------------------------------------------- Traffic Manager (DNS failover)
-# Routing "Priority": cały ruch idzie do onprem, a gdy sonda /healthz
-# na onprem zawiedzie – do AKS. TTL 10 s + sonda co 10 s => przełączenie
-# w ok. 30–60 s (zależnie od cache DNS klienta).
-locals {
-  aks_ingress_fqdn = "${var.aks_dns_label}.${var.location}.cloudapp.azure.com"
-}
-
-resource "azurerm_traffic_manager_profile" "tm" {
-  name                   = "tm-${var.prefix}"
-  resource_group_name    = azurerm_resource_group.rg.name
-  traffic_routing_method = "Priority"
-
-  dns_config {
-    relative_name = "tm-${var.prefix}"
-    ttl           = 10
-  }
-
-  monitor_config {
-    protocol                     = "HTTP"
-    port                         = 80
-    path                         = "/healthz"
-    interval_in_seconds          = 10
-    timeout_in_seconds           = 5
-    tolerated_number_of_failures = 1
-    expected_status_code_ranges  = ["200-299"]
-  }
-
-  tags = azurerm_resource_group.rg.tags
-}
-
-resource "azurerm_traffic_manager_external_endpoint" "onprem" {
-  name       = "onprem"
-  profile_id = azurerm_traffic_manager_profile.tm.id
-  target     = var.onprem_fqdn
-  priority   = 1
-  weight     = 1
-}
-
-resource "azurerm_traffic_manager_external_endpoint" "azure" {
-  name       = "azure"
-  profile_id = azurerm_traffic_manager_profile.tm.id
-  target     = local.aks_ingress_fqdn
-  priority   = 2
-  weight     = 1
+# AKS tworzy wewnętrzny load balancer (Traefik) w NASZEJ podsieci – potrzebuje uprawnień do VNet
+resource "azurerm_role_assignment" "aks_network" {
+  scope                = azurerm_resource_group.rg.id # VNet + route table
+  role_definition_name = "Network Contributor"
+  principal_id         = azurerm_kubernetes_cluster.aks.identity[0].principal_id
 }
 
 # ------------------------------------------- Storage na backupy Velero

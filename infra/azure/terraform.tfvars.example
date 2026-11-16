@@ -1,7 +1,18 @@
+# Skopiuj do terraform.tfvars (NIE commituj – jest w .gitignore) i uzupełnij.
 subscription_id      = "00000000-0000-0000-0000-000000000000"
 location             = "polandcentral" # sprawdź: Azure Policy -> Allowed resource deployment regions
 prefix               = "hybryda"
-node_vm_size         = "Standard_B2ms"
-onprem_fqdn          = "onprem.serwerfrajerow.top"
-aks_dns_label        = "hybryda-kacper"
-storage_account_name = "hybrydavelero123"
+storage_account_name = "hybrydavelero123" # globalnie unikalna, tylko a-z0-9
+
+# kubectl do AKS i SSH do bramki tylko z tych adresów (sprawdź: curl -4 ifconfig.me)
+api_allowed_cidrs = ["79.191.165.165/32", "1.2.3.4/32"] # Kacper, Daniel
+
+# SSH do bramki: zawartość pliku ~/.ssh/id_ed25519.pub
+gw_admin_ssh_public_key = "ssh-ed25519 AAAA... kacper"
+
+# WireGuard bramki – wartości z pliku .conf wygenerowanego na Pi dla peera "azure-gw"
+wg_address       = "10.10.20.10"
+wg_private_key   = "...PrivateKey z [Interface]..."
+wg_preshared_key = "...PresharedKey z [Peer] (albo pusty)..."
+pi_public_key    = "...PublicKey z [Peer]..."
+pi_endpoint      = "vpn.twoja-domena:51820" # Endpoint z [Peer]

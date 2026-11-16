@@ -1,4 +1,6 @@
 # Traefik w AKS (w k3s Traefik jest wbudowany).
+# Wariant VPN: WEWNĘTRZNY load balancer Azure – adres tylko w VNet (10.50.1.250),
+# osiągalny z sieci VPN przez bramkę WireGuard. Brak publicznego IP.
 ingressClass:
   enabled: true
   isDefaultClass: true
@@ -6,8 +8,8 @@ ingressClass:
 service:
   type: LoadBalancer
   annotations:
-    # publiczna nazwa: hybryda-kacper.<region>.cloudapp.azure.com -> endpoint "azure" w Traffic Managerze
-    service.beta.kubernetes.io/azure-dns-label-name: hybryda-kacper
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    service.beta.kubernetes.io/azure-load-balancer-ipv4: "10.50.1.250" # = ingress_ip w Terraform
     # sonda Azure Load Balancera na port Traefika (TCP), żeby nie zależała od reguł Ingress
     service.beta.kubernetes.io/port_80_health-probe_protocol: Tcp
     service.beta.kubernetes.io/port_443_health-probe_protocol: Tcp

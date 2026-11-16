@@ -35,4 +35,4 @@ kubectl --context "$DST" -n hybrid-app rollout status deploy/api --timeout=180s
 
 log "[$DST] stan po migracji"
 kubectl --context "$DST" -n hybrid-app exec sts/redis -- redis-cli get visits
-[[ "$DST" == azure ]] && curl -s "http://${AKS_INGRESS_FQDN}/api/info" | jq . || true
+[[ "$DST" == azure ]] && curl -s "http://${AZURE_INGRESS_IP}/api/info" | jq . || true

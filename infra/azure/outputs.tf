@@ -6,14 +6,19 @@ output "aks_name" {
   value = azurerm_kubernetes_cluster.aks.name
 }
 
-output "aks_ingress_fqdn" {
-  description = "Nazwa, pod którą Traefik w AKS będzie widoczny z internetu"
-  value       = local.aks_ingress_fqdn
+output "aks_ingress_ip" {
+  description = "Wewnętrzny adres Traefika w AKS – backend 'azure' w HAProxy na Pi"
+  value       = var.ingress_ip
 }
 
-output "traffic_manager_fqdn" {
-  description = "Ustaw CNAME app.<Twoja domena> -> ta wartość"
-  value       = azurerm_traffic_manager_profile.tm.fqdn
+output "vnet_cidr" {
+  description = "Tę sieć trzeba dodać do AllowedIPs peera bramki na Pi i do trasy na Pi"
+  value       = var.vnet_cidr
+}
+
+output "gw_public_ip" {
+  description = "Publiczny adres bramki (SSH: ssh azureuser@<ten adres>)"
+  value       = azurerm_public_ip.gw.ip_address
 }
 
 output "velero_storage_account" {
