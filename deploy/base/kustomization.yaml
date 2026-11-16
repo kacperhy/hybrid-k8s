@@ -21,7 +21,7 @@ labels:
 images:
 - name: hybrid-api
   newName: ghcr.io/kacperhy/hybrid-api
-  newTag: 1538463fc83f7cb085db9c7d3ad973a63e7c5ea5
+  newTag: c1804a9ba0b7b8484d3b47c340c067bb1bb5e1f1
 - name: hybrid-frontend
   newName: ghcr.io/kacperhy/hybrid-frontend
-  newTag: 1538463fc83f7cb085db9c7d3ad973a63e7c5ea5
+  newTag: c1804a9ba0b7b8484d3b47c340c067bb1bb5e1f1
