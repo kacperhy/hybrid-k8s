@@ -29,9 +29,13 @@
     <p id="error" class="err"></p>
   </div>
   <script>
-    async function refresh() {
+    // Odwiedzina liczona raz na wejście na stronę (POST /api/visit),
+    // a co 2 s tylko odczyt stanu (GET /api/info) – bez zwiększania licznika.
+    async function refresh(countVisit = false) {
       try {
-        const res = await fetch('/api/info', { cache: 'no-store' });
+        const res = countVisit
+          ? await fetch('/api/visit', { method: 'POST', cache: 'no-store' })
+          : await fetch('/api/info', { cache: 'no-store' });
         const d = await res.json();
         document.documentElement.style.setProperty('--c', d.color);
         for (const k of ['cluster', 'region', 'pod', 'visits']) {
@@ -43,8 +47,8 @@
       }
       document.getElementById('ts').textContent = new Date().toLocaleTimeString('pl-PL');
     }
-    refresh();
-    setInterval(refresh, 2000);
+    refresh(true);
+    setInterval(() => refresh(false), 2000);
   </script>
 </body>
 </html>

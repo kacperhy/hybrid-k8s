@@ -25,17 +25,17 @@ REQUESTS = Counter("app_requests_total", "Liczba żądań do API", ["endpoint", 
 LATENCY = Histogram("app_request_seconds", "Czas obsługi żądania", ["endpoint", "cluster"])
 
 
-@app.get("/api/info")
-def info():
+def _info(endpoint, count_visit):
+    """Wspólna odpowiedź: który klaster/pod odpowiada + licznik odwiedzin z Redisa."""
     start = time.time()
     try:
-        visits = r.incr("visits")
+        visits = r.incr("visits") if count_visit else int(r.get("visits") or 0)
         status = "ok"
     except redis.RedisError:
         visits = None
         status = "redis_error"
-    REQUESTS.labels("info", CLUSTER_NAME, status).inc()
-    LATENCY.labels("info", CLUSTER_NAME).observe(time.time() - start)
+    REQUESTS.labels(endpoint, CLUSTER_NAME, status).inc()
+    LATENCY.labels(endpoint, CLUSTER_NAME).observe(time.time() - start)
     return jsonify(
         cluster=CLUSTER_NAME,
         region=CLUSTER_REGION,
@@ -44,6 +44,18 @@ def info():
         visits=visits,
         status=status,
     )
+
+
+@app.get("/api/info")
+def info():
+    """Odczyt stanu – NIE zwiększa licznika (strona odpytuje to co 2 s, HAProxy i sondy też)."""
+    return _info("info", count_visit=False)
+
+
+@app.post("/api/visit")
+def visit():
+    """Jedna odwiedzina = jedno wejście na stronę (frontend woła to raz, przy załadowaniu)."""
+    return _info("visit", count_visit=True)
 
 
 @app.get("/healthz")
