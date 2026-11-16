@@ -31,6 +31,12 @@ velero --kubecontext "$DST" restore create "${NAME}-restore" --from-backup "$NAM
 velero --kubecontext "$DST" restore describe "${NAME}-restore" | grep -E 'Phase|Warnings|Errors'
 
 argo_resume "$DST"
+
+# Pody czytają ConfigMap cluster-info tylko przy starcie, a restore przywrócił je
+# z konfiguracją klastra źródłowego. Czekamy, aż Argo CD poprawi ConfigMap, i restartujemy.
+log "[$DST] czekam na konfigurację klastra docelowego i restartuję pody"
+until [[ "$(kubectl --context "$DST" -n hybrid-app get cm cluster-info -o jsonpath='{.data.CLUSTER_NAME}')" == "$DST" ]]; do sleep 3; done
+kubectl --context "$DST" -n hybrid-app rollout restart deploy/api deploy/frontend
 kubectl --context "$DST" -n hybrid-app rollout status deploy/api --timeout=180s
 
 log "[$DST] stan po migracji"

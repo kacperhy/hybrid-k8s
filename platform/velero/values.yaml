@@ -26,3 +26,7 @@ configuration:
         storageAccountKeyEnvVar: AZURE_STORAGE_ACCOUNT_ACCESS_KEY
         # resourceGroup / storageAccount / subscriptionId – ze skryptu
   volumeSnapshotLocation: []
+
+# CRD instalujemy narzędziem velero (velero install --crds-only) – zadanie upgrade-crds
+# używa obrazu bitnamilegacy/kubectl, którego nie ma dla Kubernetesa 1.36.
+upgradeCRDs: false
