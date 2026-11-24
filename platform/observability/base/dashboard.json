@@ -16,7 +16,7 @@
     {
       "type": "timeseries", "title": "Żądania API / s",
       "gridPos": { "x": 0, "y": 5, "w": 12, "h": 8 },
-      "targets": [ { "expr": "sum by (cluster, status) (rate(app_requests_total{endpoint=\"info\"}[1m]))", "legendFormat": "{{cluster}} {{status}}" } ]
+      "targets": [ { "expr": "sum by (cluster, status) (rate(app_requests_total{exported_endpoint=~\"info|visit\"}[1m]))", "legendFormat": "{{cluster}} {{status}}" } ]
     },
     {
       "type": "timeseries", "title": "Czas odpowiedzi sondy (s)",

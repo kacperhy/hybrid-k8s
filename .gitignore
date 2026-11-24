@@ -6,3 +6,4 @@ infra/azure/.terraform.lock.hcl
 demo/logs/
 __pycache__/
 .pytest_cache/
+infra/azure/*.tfplan
