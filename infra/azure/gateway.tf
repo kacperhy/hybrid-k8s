@@ -30,6 +30,18 @@ resource "azurerm_network_security_group" "gw" {
   }
 
   security_rule {
+    name                       = "allow-aks-to-vpn"
+    priority                   = 110
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "10.50.1.0/24"  # podsiec AKS
+    destination_address_prefix = "10.10.20.0/24" # siec VPN za bramka
+  }
+
+  security_rule {
     name                       = "deny-internet-inbound"
     priority                   = 4000
     direction                  = "Inbound"
