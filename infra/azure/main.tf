@@ -44,7 +44,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   # kubectl tylko z naszych publicznych adresów (IP wychodzące klastra AKS dodaje sam)
   api_server_access_profile {
-    authorized_ip_ranges = var.api_allowed_cidrs
+    authorized_ip_ranges = concat(var.api_allowed_cidrs, ["${azurerm_public_ip.gw.ip_address}/32"])
   }
 
   tags = azurerm_resource_group.rg.tags
