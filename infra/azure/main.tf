@@ -27,6 +27,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
     os_disk_size_gb             = 64
     vnet_subnet_id              = azurerm_subnet.aks.id
     temporary_name_for_rotation = "tmprot"
+
+    # Azure ustawia to sam przy starcie klastra – wpisujemy, żeby Terraform nie zgłaszał różnicy
+    upgrade_settings {
+      max_surge = "10%"
+    }
   }
 
   identity {
