@@ -10,7 +10,7 @@ load_config() {
   # shellcheck disable=SC1091
   source "$ROOT/config.env"
   # adresy w sieci VPN (wartości domyślne, jeśli config.env ich nie ma)
-  APP_URL="${APP_URL:-http://10.10.20.1}"            # HAProxy na Raspberry Pi
+  APP_URL="${APP_URL:-http://10.10.20.1:8080}"            # HAProxy na Raspberry Pi
   ONPREM_INGRESS_IP="${ONPREM_INGRESS_IP:-10.10.20.6}"
   AZURE_INGRESS_IP="${AZURE_INGRESS_IP:-10.50.1.250}"
 }

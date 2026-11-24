@@ -28,4 +28,4 @@ spec:
     staticConfig:
       labels: { probe_type: global }
       static:
-        - http://10.10.20.1/healthz
+        - http://10.10.20.1:8080/healthz

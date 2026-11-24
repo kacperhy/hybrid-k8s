@@ -11,7 +11,7 @@ do internetu (poza API AKS ograniczonym do naszych adresów IP).
  Klient VPN (laptop, telefon)
         │ WireGuard
         ▼
- Raspberry Pi 10.10.20.1 ── HAProxy :80  (health check /healthz co 2 s)
+ Raspberry Pi 10.10.20.1 ── HAProxy :8080  (health check /healthz co 2 s)
         │                     │ główny               │ backup
         │ WireGuard           ▼                      ▼
         │           VM k3s 10.10.20.6       bramka WireGuard w Azure (10.10.20.10 / 10.50.2.4)
@@ -51,7 +51,7 @@ Usługi (3): **frontend** (nginx + strona pokazująca, który klaster odpowiada)
 
 | Co | Adres |
 |---|---|
-| Aplikacja (dla użytkowników) | http://10.10.20.1 (HAProxy na Pi) |
+| Aplikacja (dla użytkowników) | http://10.10.20.1:8080 (HAProxy na Pi) |
 | Panel HAProxy | http://10.10.20.1:8404 |
 | Klaster onprem (Traefik) | http://10.10.20.6 |
 | Klaster AKS (Traefik, wewnętrzny LB) | http://10.50.1.250 |
@@ -88,7 +88,7 @@ demo/                scenariusze: obserwacja ruchu, awarie, migracja
    4. Na Pi: `sudo ./add-azure-route.sh <PublicKey bramki>`; na VM: `sudo ./vpn/vm/add-azure-route.sh`.
    5. `./scripts/30-bootstrap-cluster.sh azure`.
 6. **Velero**: `./scripts/40-install-velero.sh onprem` i `./scripts/40-install-velero.sh azure`.
-7. Sprawdzenie (z klienta VPN): `curl http://10.10.20.1/api/info`, `curl http://10.50.1.250/api/info`.
+7. Sprawdzenie (z klienta VPN): `curl http://10.10.20.1:8080/api/info`, `curl http://10.50.1.250/api/info`.
 
 Gdy zmieni się nasze publiczne IP (dostęp do API AKS):
 `az aks update -g rg-hybryda -n aks-hybryda --api-server-authorized-ip-ranges <IP1>/32,<IP2>/32`.

@@ -1,5 +1,5 @@
 # Ingress bez reguły host = łapie każdy Host header. Dzięki temu działa:
-#  - ruch użytkowników przez HAProxy na Pi (http://10.10.20.1),
+#  - ruch użytkowników przez HAProxy na Pi (http://10.10.20.1:8080),
 #  - health checki HAProxy i sondy blackbox kierowane bezpośrednio na klaster,
 #  - testy po IP / nazwie konkretnego klastra.
 apiVersion: networking.k8s.io/v1

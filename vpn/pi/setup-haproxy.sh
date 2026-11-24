@@ -6,8 +6,8 @@ cd "$(dirname "$0")"
 VPN_IP=10.10.20.1
 VPN_CIDR=10.10.20.0/24
 
-if ss -ltn | grep -qE "(${VPN_IP}|0\.0\.0\.0|\*|\[::\]):(80|8404) "; then
-  echo "[!] Coś już nasłuchuje na porcie 80 lub 8404 – sprawdź: ss -ltnp | grep -E ':(80|8404) '"
+if ss -ltn | grep -qE "(${VPN_IP}|0\.0\.0\.0|\*|\[::\]):(8080|8404) "; then
+  echo "[!] Coś już nasłuchuje na porcie 80 lub 8404 – sprawdź: ss -ltnp | grep -E ':(8080|8404) '"
   exit 1
 fi
 
@@ -22,11 +22,11 @@ install -m 644 haproxy.cfg /etc/haproxy/haproxy.cfg
 haproxy -c -f /etc/haproxy/haproxy.cfg
 
 if command -v ufw >/dev/null && ufw status | grep -q "Status: active"; then
-  ufw allow in on wg0 from "$VPN_CIDR" to "$VPN_IP" port 80 proto tcp
+  ufw allow in on wg0 from "$VPN_CIDR" to "$VPN_IP" port 8080 proto tcp
   ufw allow in on wg0 from "$VPN_CIDR" to "$VPN_IP" port 8404 proto tcp
 fi
 
 systemctl enable haproxy
 systemctl restart haproxy
 systemctl --no-pager --lines=0 status haproxy
-echo "Gotowe. Z klienta VPN:  curl http://${VPN_IP}/api/info   oraz panel: http://${VPN_IP}:8404/"
+echo "Gotowe. Z klienta VPN:  curl http://${VPN_IP}:8080/api/info   oraz panel: http://${VPN_IP}:8404/"
